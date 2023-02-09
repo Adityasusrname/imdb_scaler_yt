@@ -1,5 +1,6 @@
 import React,{useEffect,useState} from 'react'
 import axios from "axios"
+import {Oval} from "react-loader-spinner"
 
 function Movies() {
 
@@ -32,7 +33,15 @@ function Movies() {
         justify-center'>
 
           {
-            movies.length==0?<h1>Loading...</h1>:
+            movies.length==0?  <Oval
+            height="80"
+            width="80"
+            radius="9"
+            color="gray"
+            secondaryColor='gray'
+            ariaLabel="loading"
+           
+          />:
             movies.map((movie)=>{
               return(
                 <div key={movie.id} className="w-[150px] h-[30vh] md:h-[40vh] md:w-[180px] m-4 rounded-xl hover:scale-110 duration-300 border-4 
