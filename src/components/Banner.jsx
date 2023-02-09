@@ -20,6 +20,7 @@ function Banner() {
     })()
 
   },[])
+  
   return (
     <>
 
