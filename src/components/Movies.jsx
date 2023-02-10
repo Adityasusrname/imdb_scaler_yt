@@ -1,24 +1,38 @@
 import React,{useEffect,useState} from 'react'
 import axios from "axios"
 import {Oval} from "react-loader-spinner"
+import Pagination from './Pagination';
 
 function Movies() {
 
   let [movies,setMovies] = useState([]);
+
+  let [pageNum,setPage]=useState(1);
+
+  const onPrev=()=>{
+        if(pageNum>1){
+          setPage(pageNum-1);
+        }
+  }
+  const onNext=()=>{
+    
+      setPage(pageNum+1);
+   
+}
      
   useEffect(function(){
 
     (function(){
         axios.
         get
-        ("https://api.themoviedb.org/3/trending/all/week?api_key=09df8f20c2dbf1dce6dd61c0a06c350c&page=1")
+        ("https://api.themoviedb.org/3/trending/all/week?api_key=09df8f20c2dbf1dce6dd61c0a06c350c&page="+pageNum)
         .then((res)=>{
           console.table(res.data.results);
           setMovies(res.data.results);
         })
     })()
 
-  },[])
+  },[pageNum])
   
   return (
     <div className='mt-8'>
@@ -60,6 +74,12 @@ function Movies() {
 
            
             </div>
+
+            <Pagination
+            pageNum={pageNum}
+            onPrev={onPrev}
+            onNext={onNext}
+            ></Pagination>
     </div>
   )
 }
