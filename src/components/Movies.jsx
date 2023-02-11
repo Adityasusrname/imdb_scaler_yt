@@ -11,6 +11,8 @@ function Movies() {
 
   let [hovered,setHovered]=useState("");
 
+  let [favourites,setFavourites]=useState([]);
+
   const onPrev=()=>{
         if(pageNum>1){
           setPage(pageNum-1);
@@ -29,6 +31,21 @@ const showEmoji = (id)=>{
 const hideEmoji = (id)=>{
   setHovered("")
 }
+
+const addEmoji = (id)=>{
+    const newFav = [...favourites,id];
+    setFavourites(newFav);
+}
+
+const removeEmoji = (id)=>{
+
+      const filteredFav = favourites.filter((element)=>{
+        return element != id
+      })
+      
+      setFavourites(filteredFav)
+}
+
      
   useEffect(function(){
 
@@ -86,7 +103,13 @@ const hideEmoji = (id)=>{
               display:hovered==movie.id?"block":"none"
             }}>
 
-            <div className='text-xl'>😍</div>
+              {
+                favourites.includes(movie.id) == true ? <div className='text-xl' onClick={()=>{removeEmoji(movie.id)}}>❌</div> : <div className='text-xl' onClick={()=>{
+                  addEmoji(movie.id)
+                }}>😍</div> 
+                   }
+
+           
 
             </div>
 
