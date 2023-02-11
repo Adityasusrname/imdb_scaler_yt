@@ -9,6 +9,8 @@ function Movies() {
 
   let [pageNum,setPage]=useState(1);
 
+  let [hovered,setHovered]=useState("");
+
   const onPrev=()=>{
         if(pageNum>1){
           setPage(pageNum-1);
@@ -18,6 +20,10 @@ function Movies() {
     
       setPage(pageNum+1);
    
+}
+
+const showEmoji = (id)=>{
+    setHovered(id)
 }
      
   useEffect(function(){
@@ -58,12 +64,24 @@ function Movies() {
           />:
             movies.map((movie)=>{
               return(
-                <div key={movie.id} className="w-[150px] h-[30vh] md:h-[40vh] md:w-[180px] m-4 rounded-xl hover:scale-110 duration-300 border-4 
-           bg-center bg-cover flex items-end"
+                <div 
+                onMouseOver={
+                  ()=>{showEmoji(movie.id)}
+                }
+                key={movie.id} className="w-[150px] h-[30vh] md:h-[40vh] md:w-[180px] m-4 rounded-xl hover:scale-110 duration-300 border-4 
+           bg-center bg-cover flex items-end relative"
            style={{
             backgroundImage:`url(https://image.tmdb.org/t/p/w500/${movie.poster_path})`
            }}
            >
+
+            <div className='p-2 bg-gray-800 absolute top-2 right-2 rounded-xl' style={{
+              display:hovered==movie.id?"block":"none"
+            }}>
+
+            <div className='text-xl'>😍</div>
+
+            </div>
 
             <div className='font-bold text-white bg-gray-900 p-4 bg-opacity-40 text-center w-full font-bold rounded-b-xl'>{movie.title||movie.name}</div>
 
