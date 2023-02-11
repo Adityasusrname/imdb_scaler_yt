@@ -25,6 +25,10 @@ function Movies() {
 const showEmoji = (id)=>{
     setHovered(id)
 }
+
+const hideEmoji = (id)=>{
+  setHovered("")
+}
      
   useEffect(function(){
 
@@ -67,6 +71,9 @@ const showEmoji = (id)=>{
                 <div 
                 onMouseOver={
                   ()=>{showEmoji(movie.id)}
+                }
+                onMouseLeave={
+                  ()=>{hideEmoji(movie.id)}
                 }
                 key={movie.id} className="w-[150px] h-[30vh] md:h-[40vh] md:w-[180px] m-4 rounded-xl hover:scale-110 duration-300 border-4 
            bg-center bg-cover flex items-end relative"
