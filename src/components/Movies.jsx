@@ -32,18 +32,20 @@ const hideEmoji = (id)=>{
   setHovered("")
 }
 
-const addEmoji = (id)=>{
-    const newFav = [...favourites,id];
+const addToFav = (movie)=>{
+    const newFav = [...favourites,movie];
     setFavourites(newFav);
+    localStorage.setItem("imdb",JSON.stringify(newFav))
 }
 
-const removeEmoji = (id)=>{
+const removeFromFav = (movie)=>{
 
       const filteredFav = favourites.filter((element)=>{
-        return element != id
+        return element.id != movie.id
       })
       
       setFavourites(filteredFav)
+      localStorage.setItem("imdb",JSON.stringify(filteredFav))
 }
 
      
@@ -54,8 +56,12 @@ const removeEmoji = (id)=>{
         get
         ("https://api.themoviedb.org/3/trending/all/week?api_key=09df8f20c2dbf1dce6dd61c0a06c350c&page="+pageNum)
         .then((res)=>{
-          console.table(res.data.results);
+          
           setMovies(res.data.results);
+          let oldFav = localStorage.getItem("imdb")
+          oldFav = JSON.parse(oldFav)
+          setFavourites([...oldFav])
+         
         })
     })()
 
@@ -102,10 +108,11 @@ const removeEmoji = (id)=>{
             <div className='p-2 bg-gray-800 absolute top-2 right-2 rounded-xl' style={{
               display:hovered==movie.id?"block":"none"
             }}>
-
+               
               {
-                favourites.includes(movie.id) == true ? <div className='text-xl' onClick={()=>{removeEmoji(movie.id)}}>❌</div> : <div className='text-xl' onClick={()=>{
-                  addEmoji(movie.id)
+                
+                favourites.find((m)=>m.id == movie.id)? <div className='text-xl' onClick={()=>{removeFromFav(movie)}}>❌</div> : <div className='text-xl' onClick={()=>{
+                  addToFav(movie)
                 }}>😍</div> 
                    }
 
