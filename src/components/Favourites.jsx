@@ -20,7 +20,10 @@ function Favourites() {
   const [favourites,setFavourites] = useState([])
   const [genres,setGenres] = useState([])
   const [rating,setRating] = useState(0)
-  const [popularity,setPoupularity] = useState(0)
+  const [popularity,setPopularity] = useState(0)
+  const [search,setSearch] = useState("")
+  const [rows,setRows] = useState(5)
+  const [curPage,setCurPage] = useState(1)
 
 
   const removeFromFav = (movie)=>{
@@ -42,6 +45,7 @@ useEffect(()=>{
   useEffect(()=>{
     let oldFav = localStorage.getItem("imdb")
     oldFav = JSON.parse(oldFav)
+    if(oldFav!=null)
     setFavourites([...oldFav])
   },[])
 
@@ -61,6 +65,40 @@ useEffect(()=>{
      })
   }
 
+
+  if(popularity==1){
+    filteredMovies = filteredMovies.sort(function(objA,objB){
+     return objA.popularity - objB.popularity
+    })
+ }
+ else if(popularity==-1){
+   filteredMovies = filteredMovies.sort(function(objA,objB){
+     return objB.popularity - objA.popularity
+    })
+ }
+ 
+ filteredMovies = filteredMovies.filter((movie)=>(movie.title || movie.name).toLowerCase().includes(search.toLowerCase()))
+
+
+ let maxPage = Math.ceil(filteredMovies.length/rows)
+ let si = (curPage-1)*rows
+ let ei = Number(si) + Number(rows)
+
+
+ filteredMovies = filteredMovies.slice(si,ei)
+
+ let onPrev = ()=>{
+  if(curPage>1){
+    setCurPage(curPage-1)
+  }
+ }
+
+ let onNext = ()=>{
+  if(curPage<maxPage){
+    setCurPage(curPage+1)
+  }
+ }
+
   return (
     <>
   
@@ -71,31 +109,31 @@ useEffect(()=>{
         return (
           <button className={ curGenre!=genre?'p-1 px-2 bg-gray-400 rounded-lg text-lg font-bold text-white hover:bg-blue-400'
         :
-        'p-1 px-2 bg-blue-400 rounded-lg text-lg font-bold text-white'} onClick={()=>setCurGenre(genre)}>{genre}</button>
+        'p-1 px-2 bg-blue-400 rounded-lg text-lg font-bold text-white'} onClick={()=>{setCurPage(1);setCurGenre(genre)}}>{genre}</button>
         )
       })
     }
      </div>
     <div className='mt-4 flex justify-center space-x-2'>
-      <input type="text" placeholder='Search' className='border-2 py-1 px-2 text-center'/>
-      <input type="number" className='border-2 py-1 px-2 text-center' value={1}/>
+      <input type="text" placeholder='Search' value={search} onChange={(e)=>setSearch(e.target.value)} className='border-2 py-1 px-2 text-center'/>
+      <input type="number" value={rows} onChange={(e)=>setRows(e.target.value)} className='border-2 py-1 px-2 text-center' />
     </div>
-    <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
-  <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
-    <thead class="bg-gray-50">
+    <div className="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
+  <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
+    <thead className="bg-gray-50">
       <tr>
         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Name</th>
         <th scope="col" class="px-6 py-4 font-medium text-gray-900">
           <div className='flex'>
-        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-up-arrows-those-icons-lineal-those-icons-3.png" class="mr-2 cursor-pointer" onClick={()=>setRating(-1)}></img>
+        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-up-arrows-those-icons-lineal-those-icons-3.png" class="mr-2 cursor-pointer" onClick={()=>{setPopularity(0); setRating(-1)}}></img>
         <div>Rating</div>
-        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-down-arrows-those-icons-lineal-those-icons-4.png" class="ml-2 mr-2 cursor-pointer" onClick={()=>setRating(1)}></img>
+        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-down-arrows-those-icons-lineal-those-icons-4.png" class="ml-2 mr-2 cursor-pointer" onClick={()=>{setPopularity(0);setRating(1)}}></img>
         </div>
         </th>
         <th scope="col" class="px-6 py-4 font-medium text-gray-900"> <div className='flex'>
-        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-up-arrows-those-icons-lineal-those-icons-3.png" class="mr-2 cursor-pointer"></img>
+        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-up-arrows-those-icons-lineal-those-icons-3.png" class="mr-2 cursor-pointer" onClick={()=>{setRating(0);setPopularity(-1)}}></img>
         <div>Popularity</div>
-        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-down-arrows-those-icons-lineal-those-icons-4.png" class="ml-2 mr-2 cursor-pointer"></img>
+        <img src="https://img.icons8.com/external-those-icons-lineal-those-icons/24/000000/external-down-arrows-those-icons-lineal-those-icons-4.png" class="ml-2 mr-2 cursor-pointer" onClick={()=>{setRating(0);setPopularity(1)}}></img>
         </div></th>
         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Genre</th>
         <th scope="col" class="px-6 py-4 font-medium text-gray-900">Remove</th>
@@ -148,7 +186,7 @@ useEffect(()=>{
  </tbody>
   </table>
 </div>
-    <Pagination></Pagination>
+    <Pagination pageNum={curPage} onPrev={onPrev} onNext={onNext}></Pagination>
     </>
   
   )
